@@ -5,6 +5,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -193,7 +194,7 @@ public class BookActivity extends AppCompatActivity {
         originalText = FileUtils.pump(path);
     }
     private int interval = 2;
-    private String replaceString = "^_^";
+    private String replaceString = "0";
 
     private TextView originalBookTxtV;
     private TextView mode1BookTxtV;
@@ -214,8 +215,9 @@ public class BookActivity extends AppCompatActivity {
         mode2BookTxtV.setText(mode2Text);
     }
 
-    private String getPatternString( int start, int interval) {
-        StringBuilder mode1Builder = new StringBuilder();
+    private String getPatternString(int start, int interval) {
+        Log.e("Replace", replaceString);
+        StringBuilder mode1Builder = new StringBuilder(originalText.length() * 3);
         for (int i = start; i+1+interval < originalText.length(); i += interval) {
             char[] temp = new char[interval];
             mode1Builder.append(replaceString);

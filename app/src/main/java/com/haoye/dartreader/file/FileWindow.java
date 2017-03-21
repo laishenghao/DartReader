@@ -21,7 +21,7 @@ import java.util.ArrayList;
  */
 
 public class FileWindow extends AlertDialog.Builder implements DialogInterface.OnClickListener {
-    private String currentPath = FileUtils.getPublicDocumentPath();
+    private String currentPath = FileUtils.getSdCardPath();
     private ArrayList<Book> importBooks = new ArrayList<>();
     private FileListAdapter fileListAdapter;
     private OnFinishedListener onFinishedListener;

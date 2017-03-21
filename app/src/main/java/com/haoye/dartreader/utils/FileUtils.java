@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * @brief
@@ -28,10 +29,11 @@ public class FileUtils {
                 Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
     }
 
-    public static String getPublicDocumentPath() {
+    public static String getSdCardPath() {
         String path = "/";
-        if (isExternalStorageReadable()) {
-            path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getPath();
+        File file = new File(Environment.getExternalStorageDirectory(), "_test.txt");
+        if (file.exists()) {
+            path = file.getAbsolutePath();
         }
         return path;
     }
@@ -68,15 +70,20 @@ public class FileUtils {
     }
 
     public static String pump(String path) {
-        Log.e("pump", path);
-        StringBuilder builder = new StringBuilder();
+        File file = new File(path);
+        StringBuilder builder = new StringBuilder((int)file.length());
         try {
-            InputStream       stream         = new FileInputStream(new File(path));
-            InputStreamReader streamReader   = new InputStreamReader(stream, Charset.forName("UTF-8"));
+            InputStream stream = new FileInputStream(file);
+            String type = getEncodingType(stream);
+            InputStreamReader streamReader   = new InputStreamReader(stream, type);
             BufferedReader    bufferedReader = new BufferedReader(streamReader);
             String line;
+            int count = 0;
             while ((line = bufferedReader.readLine()) != null) {
                 builder.append(line);
+                if (++count > 10) {
+                    break;
+                }
             }
             bufferedReader.close();
         } catch (Exception e) {
@@ -84,6 +91,19 @@ public class FileUtils {
         }
 
         return builder.toString();
+    }
+
+    public static String getEncodingType(InputStream stream) throws IOException {
+        byte[] head = new byte[3];
+        stream.read(head);
+        String type;
+        if (head[0] < 0 && head[1] < 0 && head[2] < 0){
+            type = "GBK";
+        }
+        else {
+            type = "UTF-8";
+        }
+        return type;
     }
 
 }

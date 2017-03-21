@@ -83,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:textSize="@dimen/default_text_size"
-                android:text="0"/>
+                android:text="@string/replace_char_default"/>
             <Button
                 android:id="@+id/updateBtn"
                 android:layout_width="wrap_content"

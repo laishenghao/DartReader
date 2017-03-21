@@ -194,7 +194,7 @@ public class BookActivity extends AppCompatActivity {
         originalText = FileUtils.pump(path);
     }
     private int interval = 2;
-    private String replaceString = "0";
+    private String replaceString = "�";
 
     private TextView originalBookTxtV;
     private TextView mode1BookTxtV;

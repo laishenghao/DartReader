@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="textSizeOption">
+        <item>10</item>
+        <item>14</item>
+        <item>14</item>
+        <item>18</item>
+        <item>26</item>
+        <item>自定义</item>
+    </string-array>
+    <string-array name="fgColorOption">
+        <item>浅灰</item>
+        <item>灰</item>
+        <item>白</item>
+        <item>自定义</item>
+    </string-array>
+    <string-array name="bgColorOption">
+        <item>深灰</item>
+        <item>白</item>
+        <item>黑</item>
+        <item>自定义</item>
+    </string-array>
+
+</resources>

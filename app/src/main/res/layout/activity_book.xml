@@ -1,95 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/readerBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.haoye.dartreader.BookActivity">
 
-    <!-- The primary full-screen view. This can be replaced with whatever view
-         is needed to present your content, e.g. VideoView, SurfaceView,
-         TextureView, etc. -->
-    <ScrollView
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="start|top"
-                android:textColor="#bbccdd"
-                android:textSize="@dimen/default_text_size"
-                android:layout_marginTop="20dp"
-                android:text="原文："/>
-            <TextView
-                android:id="@+id/bookContentTxtV"
-                style="@style/BookContentTextStyle"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="start|top"
-                android:textColor="#bbccdd"
-                android:layout_marginTop="20dp"
-                android:textSize="@dimen/default_text_size"
-                android:text="模板1："/>
-            <TextView
-                android:id="@+id/mode1TxtV"
-                style="@style/BookContentTextStyle"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="start|top"
-                android:textColor="#bbccdd"
-                android:layout_marginTop="20dp"
-                android:textSize="@dimen/default_text_size"
-                android:text="模板2："/>
-            <TextView
-                android:id="@+id/mode2TxtV"
-                style="@style/BookContentTextStyle"/>
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true"/>
 
-        </LinearLayout>
-    </ScrollView>
-
-    <!-- This FrameLayout insets its children based on system windows using
-         android:fitsSystemWindows. -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
-
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/fullscreen_content_controls"
-            style="?metaButtonBarStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:background="@color/black_overlay"
-            android:orientation="horizontal"
-            android:layout_marginBottom="50dp"
-            tools:ignore="UselessParent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:textSize="@dimen/default_text_size"
-                android:text="替换字符："/>
-            <EditText
-                android:id="@+id/replaceEditText"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:textSize="@dimen/default_text_size"
-                android:text="@string/replace_char_default"/>
-            <Button
-                android:id="@+id/updateBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="更新"/>
-        </LinearLayout>
+            android:layout_height="match_parent">
+            <include
+                layout="@layout/book_title_bar" />
+            <include
+                layout="@layout/content_control_bar"/>
+        </RelativeLayout>
     </FrameLayout>
-
 </FrameLayout>

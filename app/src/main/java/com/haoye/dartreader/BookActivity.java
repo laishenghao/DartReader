@@ -1,26 +1,24 @@
 package com.haoye.dartreader;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.os.Handler;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.view.inputmethod.InputMethodManager;
 
-import com.haoye.dartreader.book.BookManager;
-import com.haoye.dartreader.utils.FileUtils;
+import com.haoye.dartreader.book.BookTitlebar;
+import com.haoye.dartreader.book.ContentFragment;
+import com.haoye.dartreader.book.OpenedBookManager;
 
-import java.util.regex.Pattern;
+import java.util.ArrayList;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
+
 public class BookActivity extends AppCompatActivity {
     /**
      * Whether or not the system UI should be auto-hidden after
@@ -40,7 +38,6 @@ public class BookActivity extends AppCompatActivity {
      */
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
-    private View mContentView;
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
         @Override
@@ -50,7 +47,7 @@ public class BookActivity extends AppCompatActivity {
             // Note that some of these constants are new as of API 16 (Jelly Bean)
             // and API 19 (KitKat). It is safe to use them, as they are inlined
             // at compile-time and do nothing on earlier devices.
-            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+            viewPager.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
@@ -92,32 +89,6 @@ public class BookActivity extends AppCompatActivity {
         }
     };
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_book);
-
-        mVisible = true;
-        mControlsView = findViewById(R.id.fullscreen_content_controls);
-        mContentView = findViewById(R.id.bookContentTxtV);
-
-
-        // Set up the user interaction to manually show or hide the system UI.
-        mContentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggle();
-            }
-        });
-
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-       // findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
-
-        init();
-    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -154,7 +125,7 @@ public class BookActivity extends AppCompatActivity {
     @SuppressLint("InlinedApi")
     private void show() {
         // Show the system bar
-        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        viewPager.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         mVisible = true;
 
@@ -172,71 +143,155 @@ public class BookActivity extends AppCompatActivity {
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
 
-
-    private void initButton() {
-        Button button = (Button) findViewById(R.id.updateBtn);
-        button.setOnClickListener(new View.OnClickListener() {
+    private void initAutoHide() {
+        mVisible = true;
+        View.OnClickListener listener = new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                initBookContent();
+            public void onClick(View view) {
+                toggle();
+            }
+        };
+        originalFragment.setOnContentClickListener(listener);
+        mode1Fragment.setOnContentClickListener(listener);
+        mode2Fragment.setOnContentClickListener(listener);
+    }
+
+//================================================================================
+    private BookTitlebar      titlebar;
+    private ViewPager         viewPager;
+
+    private ContentControlBar controlBar;
+    private ContentFragment originalFragment = ContentFragment.create();
+    private ContentFragment mode1Fragment    = ContentFragment.create();
+
+    private ContentFragment mode2Fragment    = ContentFragment.create();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_book);
+        init();
+    }
+
+    private void findViews() {
+        titlebar = (BookTitlebar) findViewById(R.id.bookTitlebar);
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        mControlsView = findViewById(R.id.fullscreen_content_controls);
+    }
+
+    private void init() {
+        findViews();
+        initTitlebar();
+        initViewPager();
+        initControlBar();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                initFragmentText();
+                initAutoHide();
+            }
+        }, 1000);
+    }
+
+    private void initFragmentText() {
+        String original = OpenedBookManager.getOriginalText();
+        originalFragment.setText(original);
+        String mode1 = OpenedBookManager.getPatternString("�", 0, 1);
+        mode1Fragment.setText(mode1);
+        String mode2 = OpenedBookManager.getPatternString("�", 1, 1);
+        mode2Fragment.setText(mode2);
+    }
+
+    private void initTitlebar() {
+        titlebar.setOnItemClickListener(new BookTitlebar.OnItemMenuClickListener() {
+            @Override
+            public void onItemClick(int index) {
+                if (index >= 0 && index < viewPager.getChildCount()) {
+                    viewPager.setCurrentItem(index);
+                }
             }
         });
     }
 
-    private void init() {
-        initText();
-        initButton();
-        initBookContent();
+    private void initViewPager() {
+        ArrayList<Fragment> fragments = new ArrayList<>(3);
+        fragments.add(originalFragment);
+        fragments.add(mode1Fragment);
+        fragments.add(mode2Fragment);
+        viewPager.setAdapter(new ContentPagerAdapter(getSupportFragmentManager(), fragments));
+        viewPager.setOffscreenPageLimit(3);
+        viewPager.setCurrentItem(0);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                hideSoftInputForm();
+                titlebar.setSelectedIndex(position);
+                if (position == 0) {
+                    controlBar.setVisibility(View.GONE);
+                }
+                else {
+                    controlBar.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                hideSoftInputForm();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                hideSoftInputForm();
+            }
+        });
     }
 
-    private void initText() {
-        String path = BookManager.getOpenedBook().getPath();
-        originalText = FileUtils.pump(path);
+    private void initControlBar() {
+        controlBar = new ContentControlBar(this);
+        controlBar.setSettingsChangedListener(new ContentControlBar.OnSettingsChangedListener() {
+            @Override
+            public void onMaskCharsChange(String mask, int interval) {
+                String mode1 = OpenedBookManager.getPatternString(mask, 0, interval);
+                mode1Fragment.setText(mode1);
+                String mode2 = OpenedBookManager.getPatternString(mask, 1, interval);
+                mode2Fragment.setText(mode2);
+            }
+
+            @Override
+            public void onIntervalChange(String mask, int interval) {
+                String mode1 = OpenedBookManager.getPatternString(mask, 0, interval);
+                mode1Fragment.setText(mode1);
+                String mode2 = OpenedBookManager.getPatternString(mask, 1, interval);
+                mode2Fragment.setText(mode2);
+            }
+
+            @Override
+            public void onTextSizeChange(int newSize) {
+                // TODO: 2017-03-22
+            }
+
+            @Override
+            public void onForegroundColorChange(int newColor) {
+                // TODO: 2017-03-22
+
+            }
+
+            @Override
+            public void onBackgroundColorChange(int newColor) {
+                // TODO: 2017-03-22
+
+            }
+        });
     }
-    private int interval = 2;
-    private String replaceString = "�";
 
-    private TextView originalBookTxtV;
-    private TextView mode1BookTxtV;
-    private TextView mode2BookTxtV;
-    private EditText replaceEditTextV;
-    private String originalText = null;
-    private void initBookContent() {
-        replaceEditTextV = (EditText) findViewById(R.id.replaceEditText);
-        originalBookTxtV = (TextView) findViewById(R.id.bookContentTxtV);
-        mode1BookTxtV = (TextView) findViewById(R.id.mode1TxtV);
-        mode2BookTxtV = (TextView) findViewById(R.id.mode2TxtV);
-        replaceString = replaceEditTextV.getText().toString();
-
-        String mode1Text = getPatternString(0, interval);
-        String mode2Text = getPatternString(interval, interval);
-        originalBookTxtV.setText(originalText);
-        mode1BookTxtV.setText(mode1Text);
-        mode2BookTxtV.setText(mode2Text);
-    }
-
-    private String getPatternString(int start, int interval) {
-        Log.e("Replace", replaceString);
-        StringBuilder mode1Builder = new StringBuilder(originalText.length() * 3);
-        for (int i = start; i+1+interval < originalText.length(); i += interval) {
-            char[] temp = new char[interval];
-            mode1Builder.append(replaceString);
-            originalText.getChars(i+1, i+1+interval, temp, 0);
-            mode1Builder.append(temp);
-//            mode1Builder.getChars(i, i+1, beRpl, 0);
-//            if (canReplace(String.copyValueOf(beRpl))) {
-//                mode1Builder.replace(i, i+1, replaceString);
-//            }
+    private void hideSoftInputForm() {
+        View view = getCurrentFocus();
+        if (view != null) {
+            InputMethodManager manager =
+                    (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            manager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
-        return mode1Builder.toString();
-    }
-
-    private boolean canReplace(String letter) {
-        String punctuation = "`1234567890-=[]\\;',./~!@#$%^&*()_+{}|:\"<>?·~！@#￥%……&*（）——+【】、；‘，。/{}：“”《》？";
-        if (punctuation.contains(letter)) {
-            return false;
-        }
-        return true;
     }
 
 }

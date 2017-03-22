@@ -8,4 +8,14 @@
     <string name="fileListReturn">返回</string>
     <string name="fileListFinish">完成</string>
     <string name="replace_char_default">�</string>
+    <string name="original_content">原文</string>
+    <string name="mode1_content">模板Ⅰ</string>
+    <string name="mode2_content">模板Ⅱ</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="replace">替换</string>
+    <string name="replaceChars">字符：</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
 </resources>

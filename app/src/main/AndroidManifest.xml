@@ -22,9 +22,11 @@
         </activity>
         <activity
             android:name=".BookActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_book"
-            android:theme="@style/FullscreenTheme"></activity>
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/FullscreenTheme"/>
     </application>
 
 </manifest>

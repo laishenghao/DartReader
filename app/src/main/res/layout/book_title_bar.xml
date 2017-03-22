@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.haoye.dartreader.book.BookTitlebar xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="45dp"
+    android:layout_alignParentTop="true"
+    android:orientation="horizontal"
+    android:background="@color/colorTheme"
+    android:id="@+id/bookTitlebar">
+    <TextView
+        android:text="@string/original_content"
+        style="@style/TitlebarTextStyle"/>
+    <TextView
+        android:text="@string/mode1_content"
+        style="@style/TitlebarTextStyle"/>
+    <TextView
+        android:text="@string/mode2_content"
+        style="@style/TitlebarTextStyle"/>
+</com.haoye.dartreader.book.BookTitlebar>

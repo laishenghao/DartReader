@@ -49,6 +49,6 @@ public class BookListView extends ListView implements AdapterView.OnItemClickLis
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        BookManager.open(getContext(), adapter.getBook(position));
+        OpenedBookManager.open(getContext(), adapter.getBook(position));
     }
 }

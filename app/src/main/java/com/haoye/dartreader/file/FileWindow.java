@@ -41,7 +41,7 @@ public class FileWindow extends AlertDialog.Builder implements DialogInterface.O
         fileListAdapter = new FileListAdapter(getContext());
         fileListAdapter.update("/");
         this.setAdapter(fileListAdapter, this);
-        this.setNegativeButton("完成", new DialogInterface.OnClickListener() {
+        this.setPositiveButton("完成", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 setDismiss(dialog, true);
@@ -51,10 +51,10 @@ public class FileWindow extends AlertDialog.Builder implements DialogInterface.O
                 }
             }
         });
-        this.setPositiveButton("返回", new DialogInterface.OnClickListener() {
+        this.setNegativeButton("返回", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                setDismiss(dialog, false);// 不退出
+                setDismiss(dialog, false);
 
                 File file = new File(currentPath);
                 String path = file.getParent();

@@ -11,6 +11,7 @@ import com.haoye.dartreader.R;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.ArrayList;
 
 /**
  * @author Haoye
@@ -19,10 +20,9 @@ import java.io.FileFilter;
  * @date 2017-03-01
  * @see
  */
-
 public class FileListAdapter extends BaseAdapter{
     private LayoutInflater inflater;
-    private File[] files = null;
+    private ArrayList<File> fileList = new ArrayList<>();
 
     public FileListAdapter(Context context) {
         this.inflater = LayoutInflater.from(context);
@@ -30,14 +30,13 @@ public class FileListAdapter extends BaseAdapter{
 
     @Override
     public int getCount() {
-        if (files == null) {
-            return 0;
-        }
-        return files.length;
+        return fileList.size();
     }
 
-    public void update(File[] files) {
-        this.files = files;
+    public void update(ArrayList<File> dirs, ArrayList<File> files) {
+        this.fileList.clear();
+        this.fileList.addAll(dirs);
+        this.fileList.addAll(files);
         notifyDataSetChanged();
     }
 
@@ -50,22 +49,34 @@ public class FileListAdapter extends BaseAdapter{
                         || pathname.getName().endsWith(".TXT");
             }
         });
-        update(files);
+
+        ArrayList<File> dirsList = new ArrayList<>();
+        ArrayList<File> fileList = new ArrayList<>();
+        for (File file : files) {
+            if (file.isDirectory()) {
+                dirsList.add(file);
+            }
+            else {
+                fileList.add(file);
+            }
+        }
+
+        update(dirsList, fileList);
     }
 
     public File getFile(int index) {
-        if (index < 0 || index >= files.length) {
+        if (index < 0 || index >= fileList.size()) {
             return null;
         }
-        return files[index];
+        return fileList.get(index);
     }
 
     @Override
     public Object getItem(int position) {
-        if (files == null || position >= files.length) {
+        if (position >= fileList.size()) {
             return null;
         }
-        return files[position];
+        return fileList.get(position);
     }
 
     @Override
@@ -75,15 +86,16 @@ public class FileListAdapter extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (files[position].isDirectory()) {
+        File file = fileList.get(position);
+        if (file.isDirectory()) {
             convertView = inflater.inflate(R.layout.file_list_item_folder, null);
             TextView textView = (TextView) convertView.findViewById(R.id.itemFolderNameTxtV);
-            textView.setText(files[position].getName());
+            textView.setText(file.getName());
         }
         else {
             convertView = inflater.inflate(R.layout.file_list_item_file, null);
             TextView textView = (TextView) convertView.findViewById(R.id.itemFileNameTxtV);
-            textView.setText(files[position].getName());
+            textView.setText(file.getName());
         }
         return convertView;
     }

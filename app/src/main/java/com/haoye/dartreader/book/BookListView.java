@@ -1,6 +1,8 @@
 package com.haoye.dartreader.book;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,7 +20,8 @@ import java.util.ArrayList;
  * @see
  */
 
-public class BookListView extends ListView implements AdapterView.OnItemClickListener {
+public class BookListView extends ListView
+        implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
     private BookListAdapter adapter;
 
     public BookListView(Context context) {
@@ -43,7 +46,7 @@ public class BookListView extends ListView implements AdapterView.OnItemClickLis
     }
 
     public void saveImportedBooksToDb() {
-        ImportedBooks.saveBookList(getContext(), adapter.getBookList());
+        ImportedBooks.saveBookList(getContext(), BookListAdapter.getBookList());
     }
 
     private void init(Context context) {
@@ -51,10 +54,35 @@ public class BookListView extends ListView implements AdapterView.OnItemClickLis
         this.setAdapter(adapter);
         this.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         this.setOnItemClickListener(this);
+        this.setOnItemLongClickListener(this);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         OpenedBookManager.open(getContext(), adapter.getBook(position));
     }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setItems(new CharSequence[]{"删除此书", "清空书架", "取消"},
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which) {
+                    case 0:
+                        adapter.remove(position);
+                        break;
+                    case 1:
+                        adapter.clear();
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            });
+        builder.show();
+        return true;
+    }
+
 }

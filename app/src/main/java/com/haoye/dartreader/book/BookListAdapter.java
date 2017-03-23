@@ -22,19 +22,19 @@ import java.util.ArrayList;
 
 public class BookListAdapter extends BaseAdapter {
     private LayoutInflater inflater;
-    private static ArrayList<Book> books;
+    private static ArrayList<Book> importedbooks;
 
     public BookListAdapter(Context context) {
         this.inflater = LayoutInflater.from(context);
-        books = ImportedBooks.getImportedBookList(context);
+        importedbooks = ImportedBooks.getImportedBookList(context);
     }
 
     protected static ArrayList<Book> getBookList() {
-        return books;
+        return importedbooks;
     }
 
     public static boolean contains(String filePath) {
-        for (Book book : books) {
+        for (Book book : importedbooks) {
             if (book.getPath().equals(filePath)) {
                 return true;
             }
@@ -43,40 +43,44 @@ public class BookListAdapter extends BaseAdapter {
     }
 
     public void clear() {
-        this.books.clear();
+        importedbooks.clear();
+        notifyDataSetChanged();
     }
 
     public Book remove(int index) {
-        return this.books.remove(index);
+        Book book = importedbooks.remove(index);
+        notifyDataSetChanged();
+        return book;
     }
 
     public void remove(Book book) {
-        this.books.remove(book);
+        importedbooks.remove(book);
+        notifyDataSetChanged();
     }
 
     public boolean addBook(Book book) {
-        boolean success = this.books.add(book);
+        boolean success = importedbooks.add(book);
         notifyDataSetChanged();
         return success;
     }
 
-    public void addBooks(ArrayList<Book> books) {
-        this.books.addAll(books);
+    public void addBooks(ArrayList<Book> bookList) {
+        importedbooks.addAll(bookList);
         notifyDataSetChanged();
     }
 
     public Book getBook(int position) {
-        return this.books.get(position);
+        return importedbooks.get(position);
     }
 
     @Override
     public int getCount() {
-        return books.size();
+        return importedbooks.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return books.get(position);
+        return importedbooks.get(position);
     }
 
     @Override
@@ -97,7 +101,7 @@ public class BookListAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        Book book = books.get(position);
+        Book book = importedbooks.get(position);
         holder.bookName.setText(book.getName());
         return convertView;
     }

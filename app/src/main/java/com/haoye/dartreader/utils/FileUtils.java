@@ -3,9 +3,12 @@ package com.haoye.dartreader.utils;
 import android.os.Environment;
 import android.util.Log;
 
+import org.mozilla.universalchardet.UniversalDetector;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -70,11 +73,12 @@ public class FileUtils {
     }
 
     public static String pump(String path) {
+        String type = getEncodingType(path);
         File file = new File(path);
         StringBuilder builder = new StringBuilder((int)file.length());
         try {
             InputStream stream = new FileInputStream(file);
-            String type = getEncodingType(stream);
+
             InputStreamReader streamReader   = new InputStreamReader(stream, type);
             BufferedReader    bufferedReader = new BufferedReader(streamReader);
             String line;
@@ -93,17 +97,26 @@ public class FileUtils {
         return builder.toString();
     }
 
-    public static String getEncodingType(InputStream stream) throws IOException {
-        byte[] head = new byte[3];
-        stream.read(head);
-        String type;
-        if (head[0] < 0 && head[1] < 0 && head[2] < 0){
-            type = "GBK";
+    public static String getEncodingType(String path){
+        byte[] buf = new byte[4096];
+        UniversalDetector detector = new UniversalDetector(null);
+        try {
+            FileInputStream fis = new FileInputStream(path);
+            int read;
+            while ((read = fis.read(buf)) > 0 && !detector.isDone()) {
+                detector.handleData(buf, 0, read);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        else {
-            type = "UTF-8";
+
+        detector.dataEnd();
+        String encoding = detector.getDetectedCharset();
+        detector.reset();
+        if (encoding == null) {
+            encoding = "UTF-8";
         }
-        return type;
+        return encoding;
     }
 
 }

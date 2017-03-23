@@ -25,4 +25,13 @@
         android:textSize="@dimen/default_text_size"
         android:textColor="@color/colorDefaultTextColor"
         android:maxLines="1" />
+    <ImageView
+        android:id="@+id/itemFileStatusImg"
+        android:visibility="gone"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:padding="5dp"
+        android:src="@drawable/ic_file_status"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/app_name"/>
 </LinearLayout>

@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#aabbcc"
-            android:text="导入"
+            android:text="@string/import_book"
             android:layout_alignParentEnd="true"/>
     </RelativeLayout>
 </LinearLayout>

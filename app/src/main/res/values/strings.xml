@@ -18,4 +18,5 @@
     <string name="replaceChars">字符：</string>
 
     <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="import_book">导入</string>
 </resources>

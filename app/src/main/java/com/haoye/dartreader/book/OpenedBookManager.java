@@ -25,6 +25,8 @@ import static com.haoye.dartreader.utils.FileUtils.getEncodingType;
  * @date 2017-03-20
  */
 public class OpenedBookManager {
+    private static long readCount = 0;
+    private static long totalCount = 0;
     private static String originalText;
     private static Book   openedBook = null;
     private static BufferedReader reader = null;
@@ -36,17 +38,19 @@ public class OpenedBookManager {
     public static void open(Context context, Book book) {
         openedBook   = book;
         reader       = createReader();
-        originalText = pump(2000);
-
+//        originalText = pump(2000);
+        originalText = pumpAll();
+        readCount = originalText.getBytes().length;
         Intent intent = new Intent(context, BookActivity.class);
         context.startActivity(intent);
     }
 
     private static BufferedReader createReader() {
         File file = new File(openedBook.getPath());
+        totalCount = file.length();
         try {
             InputStream stream = new FileInputStream(file);
-            String type = getEncodingType(stream);
+            String type = getEncodingType(file.getPath());
             InputStreamReader streamReader = new InputStreamReader(stream, type);
             return new BufferedReader(streamReader);
         } catch (IOException e) {
@@ -72,7 +76,20 @@ public class OpenedBookManager {
         return builder.toString();
     }
 
-    public static String pump(final int limit) {
+    public static String pumpAll() {
+        StringBuilder builder = new StringBuilder((int) totalCount);
+        try {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return builder.toString();
+    }
+
+    public static String pump(int limit) {
         StringBuilder builder = new StringBuilder(limit+10);
         try {
             int count = 0;

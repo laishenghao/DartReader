@@ -17,6 +17,11 @@ public class BookDefault implements Book {
     private String path = "";
     private String author = "";
     private String type = "";
+    private int progress = 0;
+
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
 
     public BookDefault() {
 
@@ -61,7 +66,7 @@ public class BookDefault implements Book {
 
     @Override
     public int getProgress() {
-        return 0;
+        return progress;
     }
 
     public void setPath(String path) {
@@ -78,5 +83,13 @@ public class BookDefault implements Book {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || !(obj instanceof Book)) {
+            return false;
+        }
+        return getPath().equals(((Book) obj).getPath());
     }
 }

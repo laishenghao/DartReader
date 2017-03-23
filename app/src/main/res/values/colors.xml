@@ -7,8 +7,8 @@
     <color name="colorNull">#00000000</color>
     <color name="colorBackground">#c4d0db</color>
     <color name="colorBackground2">#e9f3f9</color>
-    <color name="colorTheme">#FF000000</color>
-    <color name="colorTitlebarBackground">#FF000000</color>
+    <color name="colorTheme">#303030</color>
+    <color name="colorTitlebarBackground">#303030</color>
     <color name="colorContentBackground">#8899aa</color>
     <color name="colorContentForeground">#5f6264</color>
     <color name="colorForegroundTheme">#aabbcc</color>

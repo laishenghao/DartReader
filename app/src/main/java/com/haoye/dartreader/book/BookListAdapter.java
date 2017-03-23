@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.haoye.dartreader.R;
+import com.haoye.dartreader.file.data.ImportedBooks;
 
 import java.util.ArrayList;
 
@@ -21,10 +22,24 @@ import java.util.ArrayList;
 
 public class BookListAdapter extends BaseAdapter {
     private LayoutInflater inflater;
-    private ArrayList<Book> books = new ArrayList<>();
+    private static ArrayList<Book> books;
 
     public BookListAdapter(Context context) {
         this.inflater = LayoutInflater.from(context);
+        books = ImportedBooks.getImportedBookList(context);
+    }
+
+    protected static ArrayList<Book> getBookList() {
+        return books;
+    }
+
+    public static boolean contains(String filePath) {
+        for (Book book : books) {
+            if (book.getPath().equals(filePath)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void clear() {

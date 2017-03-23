@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.haoye.dartreader.file.data.ImportedBooks;
+
 import java.util.ArrayList;
 
 /**
@@ -38,6 +40,10 @@ public class BookListView extends ListView implements AdapterView.OnItemClickLis
 
     public void addBook(Book book) {
         adapter.addBook(book);
+    }
+
+    public void saveImportedBooksToDb() {
+        ImportedBooks.saveBookList(getContext(), adapter.getBookList());
     }
 
     private void init(Context context) {
